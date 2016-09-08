@@ -7,6 +7,7 @@ import (
 	"github.com/jbowtie/gokogiri/xml"
 )
 
+// DumpHTML dumps a html node into a file. Panics on errors.
 func DumpHTML(node xml.Node, filename string) {
 	f, err := os.Create(filename)
 	if err != nil {

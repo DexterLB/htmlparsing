@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Settings contains settings for making http connections
 type Settings struct {
 	Transport                http.RoundTripper
 	Timeout                  time.Duration
@@ -15,6 +16,7 @@ type Settings struct {
 	ServerErrorRetryInterval time.Duration
 }
 
+// SensibleSettings returns a Settings object initialised with sensible defaults
 func SensibleSettings() *Settings {
 	return &Settings{
 		Transport:                http.DefaultTransport,

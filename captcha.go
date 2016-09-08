@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// BreakSimpleCaptcha uses the tesseract OCR command to recognise text in
+// a simple captcha
 func BreakSimpleCaptcha(image io.Reader) (string, error) {
 	var textData bytes.Buffer
 

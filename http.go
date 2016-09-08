@@ -15,6 +15,7 @@ import (
 	"github.com/sethgrid/pester"
 )
 
+// Client wraps a http client with error handling and retries
 type Client struct {
 	pester.Client
 
@@ -22,6 +23,7 @@ type Client struct {
 	serverErrorRetryInterval time.Duration
 }
 
+// NewClient initialises a client from the specified settings
 func NewClient(settings *Settings) *Client {
 	client := &Client{
 		Client:                   *pester.New(),
@@ -38,6 +40,8 @@ func NewClient(settings *Settings) *Client {
 	return client
 }
 
+// NewCookiedClient initialises a client with a cookie jar.
+// It will store cookies between requests.
 func NewCookiedClient(settings *Settings) (*Client, error) {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
@@ -50,6 +54,8 @@ func NewCookiedClient(settings *Settings) (*Client, error) {
 	return client, nil
 }
 
+// ParsePage parses a html page at the given URL.
+// It performs a GET request if formData is nil, and a POST request otherwise.
 func (client *Client) ParsePage(
 	url string, formData url.Values,
 ) (*htmlParser.HtmlDocument, error) {
@@ -65,6 +71,8 @@ func (client *Client) ParsePage(
 	return page, nil
 }
 
+// OpenPage reads the web page at the given url.
+// It performs a GET request if formData is nil, and a POST request otherwise.
 func (client *Client) OpenPage(
 	url string, formData url.Values,
 ) ([]byte, error) {
