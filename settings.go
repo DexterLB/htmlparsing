@@ -3,6 +3,8 @@ package htmlparsing
 import (
 	"net/http"
 
+	htmlParser "github.com/jbowtie/gokogiri/html"
+
 	"time"
 )
 
@@ -14,6 +16,7 @@ type Settings struct {
 	MaxServerErrorRetries    int
 	HttpRetryInterval        time.Duration
 	ServerErrorRetryInterval time.Duration
+	Encoding                 []byte
 }
 
 // SensibleSettings returns a Settings object initialised with sensible defaults
@@ -25,5 +28,6 @@ func SensibleSettings() *Settings {
 		MaxServerErrorRetries:    2,
 		HttpRetryInterval:        5 * time.Second,
 		ServerErrorRetryInterval: 10 * time.Second,
+		Encoding:                 htmlParser.DefaultEncodingBytes,
 	}
 }

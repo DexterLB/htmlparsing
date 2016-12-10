@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jbowtie/gokogiri"
 	htmlParser "github.com/jbowtie/gokogiri/html"
 	"github.com/jbowtie/gokogiri/xml"
 	"github.com/sethgrid/pester"
@@ -21,6 +20,7 @@ type Client struct {
 
 	maxServerErrorRetries    int
 	serverErrorRetryInterval time.Duration
+	encoding                 []byte
 }
 
 // NewClient initialises a client from the specified settings
@@ -37,6 +37,9 @@ func NewClient(settings *Settings) *Client {
 	client.Backoff = func(retry int) time.Duration {
 		return settings.HttpRetryInterval
 	}
+
+	client.encoding = settings.Encoding
+
 	return client
 }
 
@@ -59,12 +62,31 @@ func NewCookiedClient(settings *Settings) (*Client, error) {
 func (client *Client) ParsePage(
 	url string, formData url.Values,
 ) (*htmlParser.HtmlDocument, error) {
+	return client.ParsePageWithEncoding(
+		url,
+		formData,
+		client.encoding,
+	)
+}
+
+// ParsePage parses a html page at the given URL.
+// It performs a GET request if formData is nil, and a POST request otherwise.
+// Uses the specified encoding to decode the given page
+func (client *Client) ParsePageWithEncoding(
+	url string, formData url.Values, encoding []byte,
+) (*htmlParser.HtmlDocument, error) {
 	data, err := client.OpenPage(url, formData)
 	if err != nil {
 		return nil, err
 	}
+	page, err := htmlParser.Parse(
+		data,
+		encoding,
+		nil,
+		htmlParser.DefaultParseOption,
+		htmlParser.DefaultEncodingBytes,
+	)
 
-	page, err := gokogiri.ParseHtml(data)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing html: %s", err)
 	}
